@@ -1,10 +1,9 @@
-(ns game-of-life.life
-  (:require [quil.core :as quil]))
+(ns game-of-life.life)
 
 (defn create-grid
   "Returns a 2D grid of the specified dimensions"
   [x y]
-  (repeat y (repeat x ".")))
+  (vec (repeat x (vec (repeat y ".")))))
 
 (defn assoc-live-cell
   "Returns a new grid with the specified live cell"
@@ -15,6 +14,14 @@
   "Returns a new grid with the specified dead cell"
   [cell grid]
   (assoc-in grid cell "."))
+
+(defn populate-grid
+  "Takes a set of cells and a grid and returns a grid with the given cells
+  populated."
+  [cells grid]
+  (reduce (fn [grid cell] (assoc-live-cell cell grid))
+          grid
+          cells))
 
 (defn is-alive?
   "Returns true if the specified cell of the grid contains an alive cell,
@@ -41,7 +48,7 @@
        set))
 
 (defn count-live-neighbors
-  "Returns a set of live neighbors of a given cell"
+  "Returns a the number of live neighbors of a given cell"
   [cell grid]
   (count (filter #(is-alive? % grid) (get-neighbors cell grid))))
 
@@ -94,9 +101,9 @@
 (defn apply-grid-functions
   [grid]
   (->> {:dead #{} :alive #{}}
-                        (kill-underpopulated-cells grid)
-                        (kill-overpopulated-cells grid)
-                        (reproduce-empty-cells grid)))
+       (kill-underpopulated-cells grid)
+       (kill-overpopulated-cells grid)
+       (reproduce-empty-cells grid)))
 
 (defn step-through-generation
   "Steps through a single generation by applying the killing and reproduction
@@ -104,7 +111,7 @@
   [grid]
   (let [grid-state (apply-grid-functions grid)]
     (reduce (fn [grid dead-cell] (assoc-dead-cell dead-cell grid))
-     (reduce (fn [grid alive-cell] (assoc-live-cell alive-cell grid))
+            (reduce (fn [grid alive-cell] (assoc-live-cell alive-cell grid))
                     grid
                     (:alive grid-state))
      (:dead grid-state))))

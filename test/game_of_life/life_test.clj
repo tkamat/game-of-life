@@ -9,6 +9,11 @@
 (deftest create-grid-test
   (is (= mock-grid-empty (create-grid 3 3))))
 
+(deftest populate-grid-test
+  (is (= [["X" "." "."] ["." "X" "."] ["." "." "."]]
+         (populate-grid #{[0 0] [1 1]} mock-grid-empty))))
+
+
 (deftest assoc-live-cell-test
   (is (= [["X" "." "."] ["." "." "."] ["." "." "."]]
          (assoc-live-cell [0 0] mock-grid-empty))))
@@ -50,11 +55,4 @@
 (deftest step-through-generation-star-test
   (is (= [["X" "X" "X"] ["X" "." "X"] ["X" "X" "X"]]
          (step-through-generation mock-grid-star))))
-
-
-
-
-
-
-
 
